@@ -14,7 +14,7 @@ all: depend $(TARGET)
 depend: .depend
 .depend: $(HEADERS)
 	rm -f ./.depend
-	$(CXX) $(CXX_FLAGS) -MM $^ > ./.depend;
+#	$(CXX) $(CXX_FLAGS) -MM $^ > ./.depend;
 include .depend
 
 %.o: %.cpp $(HEADERS)
