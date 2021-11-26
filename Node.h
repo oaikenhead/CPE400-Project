@@ -70,6 +70,7 @@ void Node::removeConnect(char nodeDes) {
   nodeConnects.erase(nodeDes);
 }
 
+// send RREP messages
 void Node::sendRREP(char src, char dest, long unsigned int size, std::string RREQ_reply, char RREP_SRC) {
   if (size==0) {
     std::cout << "Node " << nodeName
