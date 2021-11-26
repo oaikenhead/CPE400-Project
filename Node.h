@@ -4,6 +4,8 @@
 #include <time.h>
 #include <map>
 
+#define NODE_NUM 10
+
 struct RequestCheck {
   char origin_RREQ;
   int ID_REQ_RREQ;
