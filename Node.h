@@ -16,6 +16,7 @@ class Node {
     Node* memLocation();
     Node* ptrForNode(char node, std::map<char, Node*> mapNode);                     // in node.cpp
     void addEdge(char first, char second, std::map<char, Node*> mapNode);           // in node.cpp
+    void destroyEdge(char first, char second, std::map<char, Node*> mapNode);       // in node.cpp
     void connectAssign(std::map<char, Node*> connects);
     void insConnect(char nodeDes, Node* loc);
     void removeConnect(char nodeDes);
@@ -70,6 +71,12 @@ void Node::addEdge(char first, char second, std::map<char, Node*> mapNode) {
 
   firstNodePtr -> insConnect(second, secondNodePtr);
   secondNodePtr -> insConnect(first, firstNodePtr);
+}
+
+// destroy node edge
+void Node::destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
+  ptrForNode(first, mapNode)->removeConnect(second);
+  ptrForNode(second, mapNode)->removeConnect(first);
 }
 
 // assigns node connections
