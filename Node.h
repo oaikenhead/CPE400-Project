@@ -21,6 +21,7 @@ class Node {
     void insConnect(char nodeDes, Node* loc);
     void removeConnect(char nodeDes);
     void sendRREP(char src, char dest, long unsigned int size, std::string RREQ_reply, char RREP_SRC);
+    bool checkConnected(char first, char second, std::map<char, Node*> mapNode);    // in node.cpp
     bool connected(char nodeName);
 
     std::map<char, Node*> nodeConnects;
@@ -73,7 +74,7 @@ void Node::addEdge(char first, char second, std::map<char, Node*> mapNode) {
   secondNodePtr -> insConnect(first, firstNodePtr);
 }
 
-// destroy node edge
+// destroy node edge by removing it
 void Node::destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
   ptrForNode(first, mapNode)->removeConnect(second);
   ptrForNode(second, mapNode)->removeConnect(first);
@@ -129,6 +130,11 @@ void Node::sendRREP(char src, char dest, long unsigned int size, std::string RRE
     nextNode->RREP_str = RREQ_reply;
     nextNode->sendRREP(nextNode->nodeName, dest, size-1, RREQ_reply, RREP_SRC);
   }
+}
+
+// checks if two nodes are connected to each other
+bool Node::checkConnected(char first, char second, std::map<char, Node*> mapNode) {
+  return ptrForNode(first, mapNode)->connected(second);
 }
 
 // checking if node is connected
