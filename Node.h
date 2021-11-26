@@ -14,6 +14,8 @@ class Node {
     Node(char nodeLetter, std::map<char, Node*> connects);
     Node& operator=(const Node& other);
     Node* memLocation();
+    Node* ptrForNode(char node, std::map<char, Node*> mapNode);                     // in node.cpp
+    void addEdge(char first, char second, std::map<char, Node*> mapNode);           // in node.cpp
     void connectAssign(std::map<char, Node*> connects);
     void insConnect(char nodeDes, Node* loc);
     void removeConnect(char nodeDes);
@@ -53,6 +55,21 @@ Node& Node::operator=(const Node& rhs) {
 // sends memory location of the node
 Node* Node::memLocation() {
   return this;
+}
+
+// pointer for node
+Node* Node::ptrForNode(char node, std::map<char, Node*> mapNode) {
+  std::map<char, Node*>::iterator nodeIterator = mapNode.find(node);
+  return (nodeIterator->second);
+}
+
+// add an edge between two nodes by adding pointers in connection list
+void Node::addEdge(char first, char second, std::map<char, Node*> mapNode) {
+  Node* firstNodePtr = ptrForNode(first, mapNode);
+  Node* secondNodePtr = ptrForNode(second, mapNode);
+
+  firstNodePtr -> insConnect(second, secondNodePtr);
+  secondNodePtr -> insConnect(first, firstNodePtr);
 }
 
 // assigns node connections
