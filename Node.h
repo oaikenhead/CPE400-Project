@@ -16,14 +16,10 @@ class Node {
     Node(char nodeLetter, std::map<char, Node*> connects);
     Node& operator=(const Node& other);
     Node* memLocation();
-    Node* ptrForNode(char node, std::map<char, Node*> mapNode);                     // in node.cpp
-    void addEdge(char first, char second, std::map<char, Node*> mapNode);           // in node.cpp
-    void destroyEdge(char first, char second, std::map<char, Node*> mapNode);       // in node.cpp
     void connectAssign(std::map<char, Node*> connects);
     void insConnect(char nodeDes, Node* loc);
     void removeConnect(char nodeDes);
     void sendRREP(char src, char dest, long unsigned int size, std::string RREQ_reply, char RREP_SRC);
-    bool checkConnected(char first, char second, std::map<char, Node*> mapNode);    // in node.cpp
     bool connected(char nodeName);
 
     std::map<char, Node*> nodeConnects;
@@ -59,27 +55,6 @@ Node& Node::operator=(const Node& rhs) {
 // sends memory location of the node
 Node* Node::memLocation() {
   return this;
-}
-
-// pointer for node
-Node* Node::ptrForNode(char node, std::map<char, Node*> mapNode) {
-  std::map<char, Node*>::iterator nodeIterator = mapNode.find(node);
-  return (nodeIterator->second);
-}
-
-// add an edge between two nodes by adding pointers in connection list
-void Node::addEdge(char first, char second, std::map<char, Node*> mapNode) {
-  Node* firstNodePtr = ptrForNode(first, mapNode);
-  Node* secondNodePtr = ptrForNode(second, mapNode);
-
-  firstNodePtr -> insConnect(second, secondNodePtr);
-  secondNodePtr -> insConnect(first, firstNodePtr);
-}
-
-// destroy node edge by removing it
-void Node::destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
-  ptrForNode(first, mapNode)->removeConnect(second);
-  ptrForNode(second, mapNode)->removeConnect(first);
 }
 
 // assigns node connections
@@ -132,11 +107,6 @@ void Node::sendRREP(char src, char dest, long unsigned int size, std::string RRE
     nextNode->RREP_str = RREQ_reply;
     nextNode->sendRREP(nextNode->nodeName, dest, size-1, RREQ_reply, RREP_SRC);
   }
-}
-
-// checks if two nodes are connected to each other
-bool Node::checkConnected(char first, char second, std::map<char, Node*> mapNode) {
-  return ptrForNode(first, mapNode)->connected(second);
 }
 
 // checking if node is connected
