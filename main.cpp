@@ -69,4 +69,11 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
     std::cout << "Randomly destroyed edge between " << genNodes.nodeA << ", " << genNodes.nodeB << std::endl;
     destroyEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
+
+  // randomly creating edges
+  for (int i=0; i<(rand() % 10); i++) {
+    NodeChoice genNodes = randSelectNode(network);
+    std::cout << "" << genNodes.nodeA << ", " << genNodes.nodeB << ")" << std::endl;
+    addEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
+  }
 }
