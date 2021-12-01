@@ -11,10 +11,99 @@ void destroyEdge(char first, char second, std::map<char, Node*> mapNode);
 bool checkConnected(char first, char second, std::map<char, Node*> mapNode);
 NodeChoice randSelectNode(char network[]);
 void threadLinks(std::map<char, Node*> mapNode, char network[]);
+void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]);
 
 int main() {
   std::cout << "CPE 400 Project" << std::endl;
-  
+  char network[NODE_NUM] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+
+	// Instantiate nodes A - J
+	std::map<char, Node*>	nothing;
+	std::map<char, Node*>	mapNode;
+	Node A('A', nothing);
+	Node B('B', nothing);
+	Node C('C', nothing);
+	Node D('D', nothing);
+	Node E('E', nothing);
+	Node F('F', nothing);
+	Node G('G', nothing);
+	Node H('H', nothing);
+	Node I('I', nothing);
+	Node J('J', nothing);
+
+	//define map
+	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('D', D.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('E', E.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('F', F.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('G', G.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
+
+	//create the edges of the map
+	addEdge('A', 'B', mapNode);
+	addEdge('B', 'C', mapNode);
+	addEdge('C', 'D', mapNode);
+	addEdge('D', 'E', mapNode);
+	addEdge('D', 'F', mapNode);
+	addEdge('E', 'F', mapNode);
+	addEdge('E', 'H', mapNode);
+	addEdge('F', 'G', mapNode);
+	addEdge('G', 'H', mapNode);
+  addEdge('G', 'I', mapNode);
+	addEdge('H', 'I', mapNode);
+	addEdge('H', 'J', mapNode);
+
+
+	// run the simulation
+	srand(time(NULL));
+	
+	//fixed test number
+	std::cout << std::endl << "**************************************" << std::endl;
+	std::cout << "Fixed network simulation:" << std::endl;
+	std::cout << std::endl << "Route Discovery from A to J" << std::endl;
+	
+	sendRREQ(mapNode, 'A', rand(), 'J', network);
+	
+	std::cout << std::endl << "-->Destroyed edge between B and C." << std::endl; 
+
+	
+	std::cout << std::endl << "-->Restore edge between B and C, to get get original network back." << std::endl; 
+	addEdge('B', 'C', mapNode);
+	
+	//highly volatile example
+	std::cout << std::endl << "**************************************" << std::endl;
+	std::cout << "Highly volatile network simulation test :" << std::endl;
+	
+	for(int i=0; i<5; i++)
+	{
+		std::cout << std::endl << "--------------------------------" << std::endl;
+		std::cout << std::endl << "TEST #" << i+1 << std::endl;
+
+	// Randomly pick a connection between 2 nodes
+		NodeChoice generated_nodes = randSelectNode(network);
+		std::cout << "\nConnection between nodes " << generated_nodes.nodeA << " and " << generated_nodes.nodeB << ".\n" << std::endl;
+		
+		sendRREQ(mapNode, generated_nodes.nodeA, rand(), generated_nodes.nodeB, network);
+		
+	// Call the simulated connection
+		threadLinks(mapNode, network);
+		
+		std::cout << std::endl;
+	}
+	
+	//redo fixed network, to see if path between A and J changed
+	std::cout << std::endl << "**************************************" << std::endl;
+	std::cout << "Lastly, lets see if path between A to J changed after all of those edges being destroyed/created:" << std::endl;
+	std::cout << std::endl << "Route Discovery: A to J" << std::endl;
+	std::cout<< std::endl <<"*Note: Every test run will have different outcomes*"<<std::endl<<std::endl;
+	
+
+	sendRREQ(mapNode, 'A', rand(), 'J', network);
+	
   return 0;
 }
 
@@ -78,10 +167,10 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
   }
 }
 
-void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char destination, char network[])
+void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[])
 {
     time_t start = time(0);
-    Node * this_node = ptrForNode(src, map_node);
+    Node * this_node = ptrForNode(src, mapNode);
     this_node->pathRec = true;
     
     std::vector<char> neighbor_vector;
@@ -123,7 +212,7 @@ void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char des
                                     << (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
 
                             //now, begin back to RREQ original by starting RREP
-                            neighbor_node->sendRREP(destination, src, neighbor_node->RREQ_str, (neighbor_node->RREQ_str).size(), destination);
+                            neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
                         }
                         else
                         {
@@ -142,14 +231,14 @@ void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char des
         // Go to the next node in the queue and update this_node        
         if(neighbor_vector.size() > 0)
         {
-            this_node = ptrForNode(neighbor_vector[0], map_node);
+            this_node = ptrForNode(neighbor_vector[0], mapNode);
             neighbor_vector.erase(neighbor_vector.begin());
         }
 
         // The destination is not in the network if there is no response after 2 seconds
         if(difftime(time(0), start) > 2.0)
         {
-            Node * validate_node = ptrForNode(src, map_node);
+            Node * validate_node = ptrForNode(src, mapNode);
             if(!validate_node->responseRec)
             {
             std::cout << "ERROR: Unable to find a path to the node: " << destination << std::endl;
@@ -163,12 +252,12 @@ void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char des
 
     for(int i=0; i<NODE_NUM; i++)
     {    
-        node_reset = ptrForNode(network[i], map_node);
+        node_reset = ptrForNode(network[i], mapNode);
         node_reset->pathRec = false;
         node_reset->RREP_str = "";
         node_reset->RREQ_str = "";
     }
-    Node * source_node_reset = ptrForNode(src, map_node);
+    Node * source_node_reset = ptrForNode(src, mapNode);
     source_node_reset->responseRec = false;
     source_node_reset->RREP_str = "";
     source_node_reset->RREQ_str = "";
