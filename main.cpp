@@ -12,6 +12,8 @@ bool checkConnected(char first, char second, std::map<char, Node*> mapNode);
 NodeChoice randSelectNode(char network[]);
 void threadLinks(std::map<char, Node*> mapNode, char network[]);
 void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]);
+void addEdges(std::map<char, Node*> mapNode);
+std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J);
 
 int main() {
   std::cout << "CPE 400 Project" << std::endl;
@@ -31,7 +33,10 @@ int main() {
 	Node I('I', nothing);
 	Node J('J', nothing);
 
+  
 	//define map
+  mapNode = mapDefine(mapNode, A, B, C, D, E, F, G, H, I, J);
+  /*
 	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
@@ -42,8 +47,11 @@ int main() {
 	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
+  */
 
 	//create the edges of the map
+  addEdges(mapNode);
+  /*
 	addEdge('A', 'B', mapNode);
 	addEdge('B', 'C', mapNode);
 	addEdge('C', 'D', mapNode);
@@ -56,7 +64,7 @@ int main() {
   addEdge('G', 'I', mapNode);
 	addEdge('H', 'I', mapNode);
 	addEdge('H', 'J', mapNode);
-
+  */
 
 	// run the simulation
 	srand(time(NULL));
@@ -167,8 +175,7 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
   }
 }
 
-void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[])
-{
+void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
     time_t start = time(0);
     Node * this_node = ptrForNode(src, mapNode);
     this_node->pathRec = true;
@@ -261,4 +268,34 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
     source_node_reset->responseRec = false;
     source_node_reset->RREP_str = "";
     source_node_reset->RREQ_str = "";
+}
+
+std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J) {
+	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('D', D.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('E', E.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('F', F.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('G', G.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
+
+  return mapNode;
+}
+
+void addEdges(std::map<char, Node*> mapNode) {
+  addEdge('A', 'B', mapNode);
+	addEdge('B', 'C', mapNode);
+	addEdge('C', 'D', mapNode);
+	addEdge('D', 'E', mapNode);
+	addEdge('D', 'F', mapNode);
+	addEdge('E', 'F', mapNode);
+	addEdge('E', 'H', mapNode);
+	addEdge('F', 'G', mapNode);
+	addEdge('G', 'H', mapNode);
+  addEdge('G', 'I', mapNode);
+	addEdge('H', 'I', mapNode);
+	addEdge('H', 'J', mapNode);
 }
