@@ -11,37 +11,60 @@ void destroyEdge(char first, char second, std::map<char, Node*> mapNode);
 bool checkConnected(char first, char second, std::map<char, Node*> mapNode);
 NodeChoice randSelectNode(char network[]);
 void threadLinks(std::map<char, Node*> mapNode, char network[]);
-void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char destination, char A_J[]);
-void addEdges(std::map<char, Node*>	map_node);
-void mapDefine(std::map<char, Node*>	map_node, Node A,Node B,Node C,Node D,Node E,Node F,Node G,Node H,Node I,Node J);
-
+void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]);
+void addEdges(std::map<char, Node*> mapNode);
+std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J);
 
 int main() {
   std::cout << "CPE 400 Project" << std::endl;
-  
-  char A_J[NODE_NUM] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+  char network[NODE_NUM] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
 	// Instantiate nodes A - J
 	std::map<char, Node*>	nothing;
-	std::map<char, Node*>	map_node;
-  Node        A('A', nothing);
-	Node				B('B', nothing);
-	Node				C('C', nothing);
-	Node				D('D', nothing);
-	Node				E('E', nothing);
-	Node				F('F', nothing);
-	Node				G('G', nothing);
-	Node				H('H', nothing);
-	Node				I('I', nothing);
-	Node				J('J', nothing);  
+	std::map<char, Node*>	mapNode;
+	Node A('A', nothing);
+	Node B('B', nothing);
+	Node C('C', nothing);
+	Node D('D', nothing);
+	Node E('E', nothing);
+	Node F('F', nothing);
+	Node G('G', nothing);
+	Node H('H', nothing);
+	Node I('I', nothing);
+	Node J('J', nothing);
+
   
-
 	//define map
-  mapDefine(map_node,A,B,C,D,E,F,G,H,I,J);
+  mapNode = mapDefine(mapNode, A, B, C, D, E, F, G, H, I, J);
+  /*
+	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('D', D.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('E', E.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('F', F.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('G', G.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
+  */
+
 	//create the edges of the map
-  addEdges(map_node);
-
-
+  addEdges(mapNode);
+  /*
+	addEdge('A', 'B', mapNode);
+	addEdge('B', 'C', mapNode);
+	addEdge('C', 'D', mapNode);
+	addEdge('D', 'E', mapNode);
+	addEdge('D', 'F', mapNode);
+	addEdge('E', 'F', mapNode);
+	addEdge('E', 'H', mapNode);
+	addEdge('F', 'G', mapNode);
+	addEdge('G', 'H', mapNode);
+  addEdge('G', 'I', mapNode);
+	addEdge('H', 'I', mapNode);
+	addEdge('H', 'J', mapNode);
+  */
 
 	// run the simulation
 	srand(time(NULL));
@@ -51,13 +74,13 @@ int main() {
 	std::cout << "Fixed network simulation:" << std::endl;
 	std::cout << std::endl << "Route Discovery from A to J" << std::endl;
 	
-	sendRREQ(map_node, 'A', rand(), 'J', A_J);
+	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
 	std::cout << std::endl << "-->Destroyed edge between B and C." << std::endl; 
 
 	
 	std::cout << std::endl << "-->Restore edge between B and C, to get get original network back." << std::endl; 
-	addEdge('B', 'C', map_node);
+	addEdge('B', 'C', mapNode);
 	
 	//highly volatile example
 	std::cout << std::endl << "**************************************" << std::endl;
@@ -69,13 +92,13 @@ int main() {
 		std::cout << std::endl << "TEST #" << i+1 << std::endl;
 
 	// Randomly pick a connection between 2 nodes
-		NodeChoice generated_nodes = randSelectNode(A_J);
+		NodeChoice generated_nodes = randSelectNode(network);
 		std::cout << "\nConnection between nodes " << generated_nodes.nodeA << " and " << generated_nodes.nodeB << ".\n" << std::endl;
 		
-		sendRREQ(map_node, generated_nodes.nodeA, rand(), generated_nodes.nodeB, A_J);
+		sendRREQ(mapNode, generated_nodes.nodeA, rand(), generated_nodes.nodeB, network);
 		
 	// Call the simulated connection
-		threadLinks(map_node,A_J);
+		threadLinks(mapNode, network);
 		
 		std::cout << std::endl;
 	}
@@ -87,10 +110,9 @@ int main() {
 	std::cout<< std::endl <<"*Note: Every test run will have different outcomes*"<<std::endl<<std::endl;
 	
 
-	sendRREQ(map_node, 'A', rand(), 'J', A_J);
+	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
-	return 0;
-
+  return 0;
 }
 
 // pointer for node
@@ -152,128 +174,128 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
     addEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
 }
-void addEdges(std::map<char, Node*>	map_node)
-{
-	addEdge('A', 'B', map_node);
-	addEdge('B', 'C', map_node);
-	addEdge('C', 'D', map_node);
-	addEdge('D', 'E', map_node);
-	addEdge('D', 'F', map_node);
-	addEdge('E', 'F', map_node);
-	addEdge('E', 'H', map_node);
-	addEdge('F', 'G', map_node);
-	addEdge('G', 'H', map_node);
-  addEdge('G', 'I', map_node);
-	addEdge('H', 'I', map_node);
-	addEdge('H', 'J', map_node);
+
+void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
+    time_t start = time(0);
+    Node * this_node = ptrForNode(src, mapNode);
+    this_node->pathRec = true;
+    
+    std::vector<char> neighbor_vector;
+    while(1)
+    {
+        bool check = true;
+        for(int i = 0; i < this_node->prevReq.size(); i++)
+        {
+            if(    this_node->prevReq[i].origin_RREQ == src &&
+                this_node->prevReq[i].ID_REQ_RREQ == request_ID)
+            {
+                check = false;
+            }
+        }
+        
+        if(check)
+        {
+            RequestCheck insert_record = {src, request_ID};
+            this_node-> prevReq.push_back(insert_record);
+
+            //if current node is desired node, no need to ask neighbors
+            if(this_node->nodeName != destination)
+            {
+                        //for each of current node (this_node) neighbors, ask RREQ
+                        for(std::map<char, Node*>::const_iterator node_iterator = this_node->nodeConnects.begin(); node_iterator != this_node->nodeConnects.end(); node_iterator++)
+
+                {
+                    Node * neighbor_node = node_iterator->second;
+                    if(neighbor_node->pathRec == false)
+                    {
+                        //send neighbor_node current path taken from original
+                        neighbor_node->RREQ_str = (this_node->RREQ_str + (this_node->nodeName));
+                        neighbor_node->pathRec = true;
+                        if(neighbor_node->nodeName == destination)
+                        { 
+                            //found destination here
+                            std::cout     << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
+                                    << " to get to this node, we begin RREP ["
+                                    << (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
+
+                            //now, begin back to RREQ original by starting RREP
+                            neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
+                        }
+                        else
+                        {
+                            //did not find, so neighbor_node will now ask its neighbors
+                            std::cout    << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
+                                    << " to get to Node " << destination << ", list of letters: " << neighbor_node->RREQ_str << std::endl;
+                        }
+                    }
+                    //add neighbor_node to queue, to forward RREQ
+                    neighbor_vector.push_back(node_iterator->first);
+                }
+            }
+            else {}
+        }
+
+        // Go to the next node in the queue and update this_node        
+        if(neighbor_vector.size() > 0)
+        {
+            this_node = ptrForNode(neighbor_vector[0], mapNode);
+            neighbor_vector.erase(neighbor_vector.begin());
+        }
+
+        // The destination is not in the network if there is no response after 2 seconds
+        if(difftime(time(0), start) > 2.0)
+        {
+            Node * validate_node = ptrForNode(src, mapNode);
+            if(!validate_node->responseRec)
+            {
+            std::cout << "ERROR: Unable to find a path to the node: " << destination << std::endl;
+            }
+            break;
+        }
+    }
+
+    // Reset the node
+    Node * node_reset = NULL;
+
+    for(int i=0; i<NODE_NUM; i++)
+    {    
+        node_reset = ptrForNode(network[i], mapNode);
+        node_reset->pathRec = false;
+        node_reset->RREP_str = "";
+        node_reset->RREQ_str = "";
+    }
+    Node * source_node_reset = ptrForNode(src, mapNode);
+    source_node_reset->responseRec = false;
+    source_node_reset->RREP_str = "";
+    source_node_reset->RREQ_str = "";
 }
-void mapDefine(std::map<char, Node*>	map_node,Node A,Node B,Node C,Node D,Node E,Node F,Node G,Node H,Node I,Node J)
-{
-	map_node.insert(std::pair<char, Node*>('A', A.memLocation()));
-	map_node.insert(std::pair<char, Node*>('B', B.memLocation()));
-	map_node.insert(std::pair<char, Node*>('C', C.memLocation()));
-	map_node.insert(std::pair<char, Node*>('D', D.memLocation()));
-	map_node.insert(std::pair<char, Node*>('E', E.memLocation()));
-	map_node.insert(std::pair<char, Node*>('F', F.memLocation()));
-	map_node.insert(std::pair<char, Node*>('G', G.memLocation()));
-	map_node.insert(std::pair<char, Node*>('H', H.memLocation()));
-	map_node.insert(std::pair<char, Node*>('I', I.memLocation()));
-	map_node.insert(std::pair<char, Node*>('J', J.memLocation()));
+
+std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J) {
+	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('D', D.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('E', E.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('F', F.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('G', G.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
+	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
+
+  return mapNode;
 }
 
-
-void sendRREQ(std::map<char, Node*> map_node, char src, int request_ID, char destination, char A_J[])
-{
-	time_t start = time(0);
-	Node * this_node = ptrForNode(src, map_node);
-	this_node->pathRec = true;
-	
-	std::vector<char> neighbor_vector;
-	while(1)
-	{
-		bool check = true;
-		for(int i = 0; i < this_node->prevReq.size(); i++)
-		{
-			if(	this_node->prevReq[i].origin_RREQ == src &&
-				this_node->prevReq[i].ID_REQ_RREQ == request_ID)
-			{
-				check = false;
-			}
-		}
-		
-		if(check)
-		{
-			RequestCheck insert_record = {src, request_ID};
-			this_node-> prevReq.push_back(insert_record);
-
-			//if current node is desired node, no need to ask neighbors
-			if(this_node->nodeName != destination)
-			{
-						//for each of current node (this_node) neighbors, ask RREQ
-				        for(std::map<char, Node*>::const_iterator node_iterator = this_node->nodeConnects.begin(); node_iterator != this_node->nodeConnects.end(); node_iterator++)
-
-				{
-					Node * neighbor_node = node_iterator->second;
-					if(neighbor_node->pathRec == false)
-					{
-						//send neighbor_node current path taken from original
-						neighbor_node->RREQ_str = (this_node->RREQ_str + (this_node->nodeName));
-						neighbor_node->pathRec = true;
-						if(neighbor_node->nodeName == destination)
-						{ 
-							//found destination here
-							std::cout 	<< "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
-									<< " to get to this node, we begin RREP ["
-									<< (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
-
-							//now, begin back to RREQ original by starting RREP
-							neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
-						}
-						else
-						{
-							//did not find, so neighbor_node will now ask its neighbors
-							std::cout	<< "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
-									<< " to get to Node " << destination << ", list of letters: " << neighbor_node->RREQ_str << std::endl;
-						}
-					}
-					//add neighbor_node to queue, to forward RREQ
-					neighbor_vector.push_back(node_iterator->first);
-				}
-			}
-			else {}
-		}
-
-		// Go to the next node in the queue and update this_node		
-		if(neighbor_vector.size() > 0)
-		{
-			this_node = ptrForNode(neighbor_vector[0], map_node);
-			neighbor_vector.erase(neighbor_vector.begin());
-		}
-
-    	// The destination is not in the network if there is no response after 2 seconds
-		if(difftime(time(0), start) > 2.0)
-		{
-			Node * validate_node = ptrForNode(src, map_node);
-			if(!validate_node->responseRec)
-			{
-			std::cout << "ERROR: Unable to find a path to the node: " << destination << std::endl;
-			}
-			break;
-		}
-	}
-
-	// Reset the node
-	Node * node_reset = NULL;
-
-	for(int i=0; i<NODE_NUM; i++)
-	{	
-		node_reset = ptrForNode(A_J[i], map_node);
-		node_reset->pathRec = false;
-		node_reset->RREP_str = "";
-		node_reset->RREQ_str = "";
-	}
-	Node * source_node_reset = ptrForNode(src, map_node);
-	source_node_reset->responseRec = false;
-	source_node_reset->RREP_str = "";
-	source_node_reset->RREQ_str = "";
+void addEdges(std::map<char, Node*> mapNode) {
+  addEdge('A', 'B', mapNode);
+	addEdge('B', 'C', mapNode);
+	addEdge('C', 'D', mapNode);
+	addEdge('D', 'E', mapNode);
+	addEdge('D', 'F', mapNode);
+	addEdge('E', 'F', mapNode);
+	addEdge('E', 'H', mapNode);
+	addEdge('F', 'G', mapNode);
+	addEdge('G', 'H', mapNode);
+  addEdge('G', 'I', mapNode);
+	addEdge('H', 'I', mapNode);
+	addEdge('H', 'J', mapNode);
 }
