@@ -1,3 +1,7 @@
+/*
+ * INCLUDES
+ */
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -6,10 +10,20 @@
 
 #define NODE_NUM 10
 
+/*
+ * STRUCT: RequestCheck
+ * holds origin RREQ and ID Request RREQ
+ */
+
 struct RequestCheck {
   char origin_RREQ;
   int ID_REQ_RREQ;
 };
+
+/*
+ * CLASS: Node
+ * contains definitions for Node object traits
+ */
 
 class Node {
   public:
@@ -31,7 +45,11 @@ class Node {
     bool responseRec;
 };
 
-// ctor
+/*
+ * FUNCTION: Parameterized Ctor
+ * sets a parameterized instance of the Node object
+ * RETURNS: The current class instance
+ */
 Node::Node(char nodeLetter, std::map<char, Node*> connects) {
   // setting node designation to letter
   nodeName = nodeLetter;
@@ -44,7 +62,11 @@ Node::Node(char nodeLetter, std::map<char, Node*> connects) {
   responseRec = false;
 }
 
-// assignment operator
+/*
+ * FUNCTION: Assignment Operator
+ * assigns lhs to rhs then returns
+ * RETURNS: The value of the operator specified by left operand
+ */
 Node& Node::operator=(const Node& rhs) {
   if (this == &rhs) {
     return *this;
@@ -52,27 +74,47 @@ Node& Node::operator=(const Node& rhs) {
   return *this;
 }
 
-// sends memory location of the node
+/*
+ * FUNCTION: memLocation
+ * sends the memory location of the Node
+ * RETURNS: Node pointer to memory location
+ */
 Node* Node::memLocation() {
   return this;
 }
 
-// assigns node connections
+/*
+ * FUNCTION: connectAssign
+ * connects map of nodes to nodes being passed in
+ * RETURNS: nothing (void)
+ */
 void Node::connectAssign(std::map<char, Node*> connects) {
   nodeConnects = connects;
 }
 
-// inserting node connections
+/*
+ * FUNCTION: insConnect
+ * inserting newly creat3ed node connections into the Node map
+ * RETURNS: nothing (void)
+ */
 void Node::insConnect(char nodeDes, Node* loc) {
   nodeConnects.insert(std::pair<char, Node*>(nodeDes, loc));
 }
 
-// removing node connections
+/*
+ * FUNCTION: removeConnect
+ * removing node connections
+ * RETURNS: nothing (void)
+ */
 void Node::removeConnect(char nodeDes) {
   nodeConnects.erase(nodeDes);
 }
 
-// send RREP messages
+/*
+ * FUNCTION: sendRREP
+ * simulates sending an RREQ message
+ * RETURNS: nothing (void)
+ */
 void Node::sendRREP(char src, char dest, int size, std::string RREQ_reply, char RREP_SRC) {
   if (size==0) {
     std::cout << "Node " << nodeName
@@ -109,7 +151,11 @@ void Node::sendRREP(char src, char dest, int size, std::string RREQ_reply, char 
   }
 }
 
-// checking if node is connected
+/*
+ * FUNCTION: connected
+ * checks if a node is connected
+ * RETURNS: true/false (bool)
+ */
 bool Node::connected(char nodeName) {
   if (nodeConnects.count(nodeName)>0) {
     return true;
