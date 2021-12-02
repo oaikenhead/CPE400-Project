@@ -103,7 +103,7 @@ call destroy edge then run? or add destroy edge then fix?
 	std::cout << std::endl << "-->Destroyed edge between B and C." << std::endl; 
 
 	
-	std::cout << std::endl << "-->Restore edge between B and C, to get get original network back." << std::endl; 
+	std::cout << std::endl << "-->Restore edge between B and C, to get network back." << std::endl; 
 	addEdge('B', 'C', mapNode);
 	
 
@@ -159,13 +159,20 @@ call destroy edge then run? or add destroy edge then fix?
   return 0;
 }
 
-// pointer for node
+/*
+* FUNCTION:ptrForNode 
+*     grabs pointer char and the node from mapNode and gets a pointer to the next iteration
+* RETURNS: Node Pointer
+*/
 Node* ptrForNode(char node, std::map<char, Node*> mapNode) {
   std::map<char, Node*>::iterator nodeIterator = mapNode.find(node);
   return (nodeIterator->second);
 }
-
-// add an edge between two nodes by adding pointers in connection list
+/*
+* FUNCTION: addEdge 
+*     adds edge between chosen nodes by char, then connects the pointers to the nodes
+* RETURNS: void
+*/
 void addEdge(char first, char second, std::map<char, Node*> mapNode) {
   Node* firstNodePtr = ptrForNode(first, mapNode);
   Node* secondNodePtr = ptrForNode(second, mapNode);
@@ -173,24 +180,33 @@ void addEdge(char first, char second, std::map<char, Node*> mapNode) {
   firstNodePtr -> insConnect(second, secondNodePtr);
   secondNodePtr -> insConnect(first, firstNodePtr);
 }
-
-// destroy node edge by removing it
+/*
+* FUNCTION: destroyEdge 
+*     destroys edge by removing connection
+* RETURNS: void
+*/
 void destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
   ptrForNode(first, mapNode)->removeConnect(second);
   ptrForNode(second, mapNode)->removeConnect(first);
 }
-
-// checks if two nodes are connected to each other
+/*
+* FUNCTION: checkConnected
+*     Checks if two nodes are connected with edges using the char values
+* RETURNS: bool
+*/
 bool checkConnected(char first, char second, std::map<char, Node*> mapNode) {
   return ptrForNode(first, mapNode)->connected(second);
 }
-
+/*
+* FUNCTION: randSelectNode
+*     Randomly selects two nodes and returns the two selected nodes
+* RETURNS: NodeChoice
+*/
 NodeChoice randSelectNode(char network[]) {
   NodeChoice selectedNode;
   selectedNode.nodeA = network[rand() % NODE_NUM];
   selectedNode.nodeB = network[rand() % NODE_NUM];
 
-  // while the nodes are the same
   while (selectedNode.nodeA == selectedNode.nodeB) {
     selectedNode.nodeA = network[rand() % NODE_NUM];
     selectedNode.nodeB = network[rand() % NODE_NUM];
@@ -199,7 +215,11 @@ NodeChoice randSelectNode(char network[]) {
   return selectedNode;
 }
 
-// simulating a thread, randomly creating edges
+/*
+* FUNCTION: threadLinks
+*     Generates a random number of nodes to choose from, then randomly destroys edges between seperate nodes. Then randomly creates edges. 
+* RETURNS: void
+*/
 void threadLinks(std::map<char, Node*> mapNode, char network[]) {
   for (int i=0; i<(rand()%10); i++) {
     NodeChoice genNodes = randSelectNode(network);
@@ -207,25 +227,31 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
     while (ptrForNode(genNodes.nodeA, mapNode)->connected(genNodes.nodeB)) {
       genNodes = randSelectNode(network);
     }
-    std::cout << "Randomly destroyed edge between " << genNodes.nodeA << ", " << genNodes.nodeB << std::endl;
+    std::cout << "Destroyed -> " << genNodes.nodeA << " and -> " << genNodes.nodeB << "'s edges."<< std::endl;
     destroyEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
-
-  // randomly creating edges
   for (int i=0; i<(rand() % 10); i++) {
     NodeChoice genNodes = randSelectNode(network);
     std::cout << "" << genNodes.nodeA << ", " << genNodes.nodeB << ")" << std::endl;
     addEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
 }
-
+/*
+* FUNCTION: sendRREQ
+*     simulates successful and unsuccessful network by taking in a source and destination node.  
+* RETURNS: void
+*/
 void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
+    //current time
     time_t start = time(0);
+    //pointer of source node
     Node * this_node = ptrForNode(src, mapNode);
     this_node->pathRec = true;
     
+
+    //vector of neighboring nodes using edges
     std::vector<char> neighbor_vector;
-    while(1)
+    while(true)
     {
         bool check = true;
         for(int i = 0; i < this_node->prevReq.size(); i++)
@@ -242,27 +268,25 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
             RequestCheck insert_record = {src, request_ID};
             this_node-> prevReq.push_back(insert_record);
 
-            //if current node is desired node, no need to ask neighbors
+            //Verifies that src is not destination
             if(this_node->nodeName != destination)
             {
-                        //for each of current node (this_node) neighbors, ask RREQ
                         for(std::map<char, Node*>::const_iterator node_iterator = this_node->nodeConnects.begin(); node_iterator != this_node->nodeConnects.end(); node_iterator++)
 
                 {
                     Node * neighbor_node = node_iterator->second;
                     if(neighbor_node->pathRec == false)
                     {
-                        //send neighbor_node current path taken from original
                         neighbor_node->RREQ_str = (this_node->RREQ_str + (this_node->nodeName));
                         neighbor_node->pathRec = true;
                         if(neighbor_node->nodeName == destination)
                         { 
-                            //found destination here
+                            //destination found
                             std::cout     << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
                                     << " to get to this node, we begin RREP ["
                                     << (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
 
-                            //now, begin back to RREQ original by starting RREP
+                            //use same path for RREP
                             neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
                         }
                         else
@@ -272,21 +296,17 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
                                     << " to get to Node " << destination << ", list of letters: " << neighbor_node->RREQ_str << std::endl;
                         }
                     }
-                    //add neighbor_node to queue, to forward RREQ
+                    //add neighbor to neighbor_vector
                     neighbor_vector.push_back(node_iterator->first);
                 }
             }
             else {}
-        }
-
-        // Go to the next node in the queue and update this_node        
+        }       
         if(neighbor_vector.size() > 0)
         {
             this_node = ptrForNode(neighbor_vector[0], mapNode);
             neighbor_vector.erase(neighbor_vector.begin());
         }
-
-        // The destination is not in the network if there is no response after 2 seconds
         if(difftime(time(0), start) > 2.0)
         {
             Node * validate_node = ptrForNode(src, mapNode);
@@ -297,8 +317,6 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
             break;
         }
     }
-
-    // Reset the node
     Node * node_reset = NULL;
 
     for(int i=0; i<NODE_NUM; i++)
@@ -313,7 +331,11 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
     source_node_reset->RREP_str = "";
     source_node_reset->RREQ_str = "";
 }
-
+/*
+* FUNCTION: mapDefine
+*     Inserts nodes into map  
+* RETURNS: map of Nodes
+*/
 std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J) {
 	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
@@ -328,7 +350,11 @@ std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, N
 
   return mapNode;
 }
-
+/*
+* FUNCTION: addEdges
+*     starts complete network with default edges  
+* RETURNS: void
+*/
 void addEdges(std::map<char, Node*> mapNode) {
   addEdge('A', 'B', mapNode);
 	addEdge('B', 'C', mapNode);
