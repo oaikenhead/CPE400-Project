@@ -1,4 +1,15 @@
 /*
+ * CPE400 Final Project
+ *
+ * Project Topic #4
+ * 
+ * Group Members:
+ *  Olliver Aikenhead
+ *  Mason Adams
+ *  Davis DeSarle
+ */
+
+/*
  * INCLUDES
  */
 
@@ -211,7 +222,7 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
   }
   for (int i=0; i<(rand() % 10); i++) {
     NodeChoice genNodes = randSelectNode(network);
-    std::cout << "" << genNodes.nodeA << ", " << genNodes.nodeB << ")" << std::endl;
+    std::cout << "(" << genNodes.nodeA << ", " << genNodes.nodeB << ")" << std::endl;
     addEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
 }
@@ -222,94 +233,81 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
  * RETURNS: void
  */
 void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
-    //current time
-    time_t start = time(0);
-    //pointer of source node
-    Node * this_node = ptrForNode(src, mapNode);
-    this_node->pathRec = true;
-    
+  //current time
+  time_t start = time(0);
+  //pointer of source node
+  Node * this_node = ptrForNode(src, mapNode);
+  this_node->pathRec = true;
 
-    //vector of neighboring nodes using edges
-    std::vector<char> neighbor_vector;
-    while(true)
-    {
-        bool check = true;
-        for(int i = 0; i < this_node->prevReq.size(); i++)
-        {
-            if(    this_node->prevReq[i].origin_RREQ == src &&
-                this_node->prevReq[i].ID_REQ_RREQ == request_ID)
-            {
-                check = false;
-            }
-        }
+  //vector of neighboring nodes using edges
+  std::vector<char> neighbor_vector;
+  while(true) {
+    bool check = true;
+    for(int i = 0; i < this_node->prevReq.size(); i++) {
+      if (this_node->prevReq[i].origin_RREQ == src && this_node->prevReq[i].ID_REQ_RREQ == request_ID) {
+        check = false;
+      }
+    }
         
-        if(check)
-        {
-            RequestCheck insert_record = {src, request_ID};
-            this_node-> prevReq.push_back(insert_record);
+    if(check) {
+      RequestCheck insert_record = {src, request_ID};
+      this_node-> prevReq.push_back(insert_record);
 
-            //Verifies that src is not destination
-            if(this_node->nodeName != destination)
-            {
-                        for(std::map<char, Node*>::const_iterator node_iterator = this_node->nodeConnects.begin(); node_iterator != this_node->nodeConnects.end(); node_iterator++)
+      //Verifies that src is not destination
+      if(this_node->nodeName != destination) {
+        for(std::map<char, Node*>::const_iterator node_iterator = this_node->nodeConnects.begin(); node_iterator != this_node->nodeConnects.end(); node_iterator++) {
+          Node * neighbor_node = node_iterator->second;
+          
+          if(neighbor_node->pathRec == false) {
+            neighbor_node->RREQ_str = (this_node->RREQ_str + (this_node->nodeName));
+            neighbor_node->pathRec = true;
+            
+            if(neighbor_node->nodeName == destination) { 
+              //destination found
+              std::cout << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
+                        << " to get to this node, we begin RREP ["
+                        << (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
 
-                {
-                    Node * neighbor_node = node_iterator->second;
-                    if(neighbor_node->pathRec == false)
-                    {
-                        neighbor_node->RREQ_str = (this_node->RREQ_str + (this_node->nodeName));
-                        neighbor_node->pathRec = true;
-                        if(neighbor_node->nodeName == destination)
-                        { 
-                            //destination found
-                            std::cout     << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
-                                    << " to get to this node, we begin RREP ["
-                                    << (neighbor_node->RREQ_str + neighbor_node->nodeName) << "]" << std::endl;
-
-                            //use same path for RREP
-                            neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
-                        }
-                        else
-                        {
-                            //did not find, so neighbor_node will now ask its neighbors
-                            std::cout    << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
-                                    << " to get to Node " << destination << ", list of letters: " << neighbor_node->RREQ_str << std::endl;
-                        }
-                    }
-                    //add neighbor to neighbor_vector
-                    neighbor_vector.push_back(node_iterator->first);
-                }
+              //use same path for RREP
+              neighbor_node->sendRREP(destination, src, (neighbor_node->RREQ_str).size(),neighbor_node->RREQ_str, destination);
+            } else {
+              //did not find, so neighbor_node will now ask its neighbors
+              std::cout << "Node " << neighbor_node->nodeName << " received a RREQ from Node " << this_node->nodeName
+                        << " to get to Node " << destination << ", list of letters: " << neighbor_node->RREQ_str << std::endl;
             }
-            else {}
-        }       
-        if(neighbor_vector.size() > 0)
-        {
+          }
+          //add neighbor to neighbor_vector
+          neighbor_vector.push_back(node_iterator->first);
+        }
+      } else {}
+    }       
+    
+    if(neighbor_vector.size() > 0) {
             this_node = ptrForNode(neighbor_vector[0], mapNode);
             neighbor_vector.erase(neighbor_vector.begin());
-        }
-        if(difftime(time(0), start) > 2.0)
-        {
-            Node * validate_node = ptrForNode(src, mapNode);
-            if(!validate_node->responseRec)
-            {
-            std::cout << "ERROR: Unable to find a path to the node: " << destination << std::endl;
-            }
-            break;
-        }
     }
-    Node * node_reset = NULL;
-
-    for(int i=0; i<NODE_NUM; i++)
-    {    
-        node_reset = ptrForNode(network[i], mapNode);
-        node_reset->pathRec = false;
-        node_reset->RREP_str = "";
-        node_reset->RREQ_str = "";
+    
+    if(difftime(time(0), start) > 2.0) {
+      Node * validate_node = ptrForNode(src, mapNode);
+      if(!validate_node->responseRec) {
+        std::cout << "ERROR: Unable to find a path to the node: " << destination << std::endl;
+      }
+      break;
     }
-    Node * source_node_reset = ptrForNode(src, mapNode);
-    source_node_reset->responseRec = false;
-    source_node_reset->RREP_str = "";
-    source_node_reset->RREQ_str = "";
+  }
+  
+  Node * node_reset = NULL;
+  for (int i=0; i<NODE_NUM; i++) {    
+    node_reset = ptrForNode(network[i], mapNode);
+    node_reset->pathRec = false;
+    node_reset->RREP_str = "";
+    node_reset->RREQ_str = "";
+  }
+  
+  Node * source_node_reset = ptrForNode(src, mapNode);
+  source_node_reset->responseRec = false;
+  source_node_reset->RREP_str = "";
+  source_node_reset->RREQ_str = "";
 }
 
 /*
