@@ -88,40 +88,16 @@ int main() {
    */
 	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
-
-/*
-
-FOR OLLIVER 
-
-edge never gets destroyed or simulated??
-call destroy edge then run? or add destroy edge then fix?
-
-
-
-*/
-
-	std::cout << std::endl << "-->Destroyed edge between B and C." << std::endl; 
-
-	
-	std::cout << std::endl << "-->Restore edge between B and C, to get network back." << std::endl; 
-	addEdge('B', 'C', mapNode);
-	
-
-//end of potentially pointless code
-
-
-
-
   /*
-  * Print for Highly volatile simulation
-  */
+   * Print for Highly volatile simulation
+   */
 	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
 	std::cout << "Volatile Network Simulation:" << std::endl;
 	
 
   /*
-  * 5x loop to test deleted and restored connections
-  */
+   * 5x loop to test deleted and restored connections
+   */
 	for(int i=0; i<5; i++)
 	{
 		std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
@@ -129,50 +105,51 @@ call destroy edge then run? or add destroy edge then fix?
 
 	 /*
     * Creates randomly generated nodes, and prints them
-   */
+    */
 		NodeChoice generated_nodes = randSelectNode(network);
 		std::cout << "\nNode -> " << generated_nodes.nodeA << " and -> " << generated_nodes.nodeB << " are connected.\n" << std::endl;
-	 /*
+	 
+   /*
     * Calls sendRREQ with the randomly generated nodes
-   */
+    */
 		sendRREQ(mapNode, generated_nodes.nodeA, rand(), generated_nodes.nodeB, network);
 
 	 /*
     * Calls threadLinks to simulate loss of connections and creating new connections
-   */
+    */
 		threadLinks(mapNode, network);
-		
-		std::cout << "\n\n" <<std::endl;
+		std::cout << "\n" <<std::endl;
 	}
 	
   /*
-  * Print for final test 
-  */
+   * Print for final test 
+   */
 	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
-	std::cout << "New Path from Node A to Node J:" << std::endl<< std::endl<< std::endl;
+	std::cout << "New Path from Node A to Node J:" << std::endl << std::endl;
 	
   /*
-  * Final SendRREQ to show new path from A to J
-  */
+   * Final SendRREQ to show new path from A to J
+   */
 	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
   return 0;
 }
 
 /*
-* FUNCTION:ptrForNode 
-*     grabs pointer char and the node from mapNode and gets a pointer to the next iteration
-* RETURNS: Node Pointer
-*/
+ * FUNCTION:ptrForNode 
+ *     grabs pointer char and the node from mapNode and gets a pointer to the next iteration
+ * RETURNS: Node Pointer
+ */
 Node* ptrForNode(char node, std::map<char, Node*> mapNode) {
   std::map<char, Node*>::iterator nodeIterator = mapNode.find(node);
   return (nodeIterator->second);
 }
+
 /*
-* FUNCTION: addEdge 
-*     adds edge between chosen nodes by char, then connects the pointers to the nodes
-* RETURNS: void
-*/
+ * FUNCTION: addEdge 
+ *     adds edge between chosen nodes by char, then connects the pointers to the nodes
+ * RETURNS: void
+ */
 void addEdge(char first, char second, std::map<char, Node*> mapNode) {
   Node* firstNodePtr = ptrForNode(first, mapNode);
   Node* secondNodePtr = ptrForNode(second, mapNode);
@@ -180,28 +157,31 @@ void addEdge(char first, char second, std::map<char, Node*> mapNode) {
   firstNodePtr -> insConnect(second, secondNodePtr);
   secondNodePtr -> insConnect(first, firstNodePtr);
 }
+
 /*
-* FUNCTION: destroyEdge 
-*     destroys edge by removing connection
-* RETURNS: void
-*/
+ * FUNCTION: destroyEdge 
+ *     destroys edge by removing connection
+ * RETURNS: void
+ */
 void destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
   ptrForNode(first, mapNode)->removeConnect(second);
   ptrForNode(second, mapNode)->removeConnect(first);
 }
+
 /*
-* FUNCTION: checkConnected
-*     Checks if two nodes are connected with edges using the char values
-* RETURNS: bool
-*/
+ * FUNCTION: checkConnected
+ *     Checks if two nodes are connected with edges using the char values
+ * RETURNS: bool
+ */
 bool checkConnected(char first, char second, std::map<char, Node*> mapNode) {
   return ptrForNode(first, mapNode)->connected(second);
 }
+
 /*
-* FUNCTION: randSelectNode
-*     Randomly selects two nodes and returns the two selected nodes
-* RETURNS: NodeChoice
-*/
+ * FUNCTION: randSelectNode
+ *     Randomly selects two nodes and returns the two selected nodes
+ * RETURNS: NodeChoice
+ */
 NodeChoice randSelectNode(char network[]) {
   NodeChoice selectedNode;
   selectedNode.nodeA = network[rand() % NODE_NUM];
@@ -216,10 +196,10 @@ NodeChoice randSelectNode(char network[]) {
 }
 
 /*
-* FUNCTION: threadLinks
-*     Generates a random number of nodes to choose from, then randomly destroys edges between seperate nodes. Then randomly creates edges. 
-* RETURNS: void
-*/
+ * FUNCTION: threadLinks
+ *     Generates a random number of nodes to choose from, then randomly destroys edges between seperate nodes. Then randomly creates edges. 
+ * RETURNS: void
+ */
 void threadLinks(std::map<char, Node*> mapNode, char network[]) {
   for (int i=0; i<(rand()%10); i++) {
     NodeChoice genNodes = randSelectNode(network);
@@ -236,11 +216,12 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
     addEdge(genNodes.nodeA, genNodes.nodeB, mapNode);
   }
 }
+
 /*
-* FUNCTION: sendRREQ
-*     simulates successful and unsuccessful network by taking in a source and destination node.  
-* RETURNS: void
-*/
+ * FUNCTION: sendRREQ
+ *     simulates successful and unsuccessful network by taking in a source and destination node.  
+ * RETURNS: void
+ */
 void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
     //current time
     time_t start = time(0);
@@ -331,11 +312,12 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
     source_node_reset->RREP_str = "";
     source_node_reset->RREQ_str = "";
 }
+
 /*
-* FUNCTION: mapDefine
-*     Inserts nodes into map  
-* RETURNS: map of Nodes
-*/
+ * FUNCTION: mapDefine
+ *     Inserts nodes into map  
+ * RETURNS: map of Nodes
+ */
 std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J) {
 	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
 	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
@@ -350,11 +332,12 @@ std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, N
 
   return mapNode;
 }
+
 /*
-* FUNCTION: addEdges
-*     starts complete network with default edges  
-* RETURNS: void
-*/
+ * FUNCTION: addEdges
+ *     starts complete network with default edges  
+ * RETURNS: void
+ */
 void addEdges(std::map<char, Node*> mapNode) {
   addEdge('A', 'B', mapNode);
 	addEdge('B', 'C', mapNode);
