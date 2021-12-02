@@ -19,7 +19,7 @@ class Node {
     void connectAssign(std::map<char, Node*> connects);
     void insConnect(char nodeDes, Node* loc);
     void removeConnect(char nodeDes);
-    void sendRREP(char src, char dest, long unsigned int size, std::string RREQ_reply, char RREP_SRC);
+    void sendRREP(char src, char dest, int size, std::string RREQ_reply, char RREP_SRC);
     bool connected(char nodeName);
 
     std::map<char, Node*> nodeConnects;
@@ -73,7 +73,7 @@ void Node::removeConnect(char nodeDes) {
 }
 
 // send RREP messages
-void Node::sendRREP(char src, char dest, long unsigned int size, std::string RREQ_reply, char RREP_SRC) {
+void Node::sendRREP(char src, char dest, int size, std::string RREQ_reply, char RREP_SRC) {
   if (size==0) {
     std::cout << "Node " << nodeName
               << " successfully received path to " << RREP_SRC

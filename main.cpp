@@ -1,13 +1,13 @@
 /*
-* INCLUDES
-*/
+ * INCLUDES
+ */
 
 #include "Node.h"
 
 /*
-* STRUCT: NodeChoice
-* Holds 2 chars, nodeA and nodeB
-*/
+ * STRUCT: NodeChoice
+ * Holds 2 chars, nodeA and nodeB
+ */
 
 struct NodeChoice {
   char nodeA;
@@ -15,8 +15,8 @@ struct NodeChoice {
 };
 
 /*
-* FUNCTION DECLARATIONS
-*/
+ * FUNCTION DECLARATIONS
+ */
 
 Node* ptrForNode(char node, std::map<char, Node*> mapNode);
 void addEdge(char first, char second, std::map<char, Node*> mapNode);
@@ -30,26 +30,26 @@ std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, N
 
 
 /*
-* MAIN, GETS CALLED ON ./run
-*/
+ * MAIN, GETS CALLED ON ./run
+ */
 
 int main() {
   std::cout << "CPE 400 Project" << std::endl;
 
   /*
-  * Initializes network of chars for node names
-  */
+   * Initializes network of chars for node names
+   */
   char network[NODE_NUM] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
   /*
-  * Creates Two maps of characters and Nodes, nothing and mapNode
-  */
+   * Creates Two maps of characters and Nodes, nothing and mapNode
+   */
 	std::map<char, Node*>	nothing;
 	std::map<char, Node*>	mapNode;
 
   /*
-  * Constructs Nodes A through J, with the pointer for the Node going to the nothing Map of Nodes
-  */
+   * Constructs Nodes A through J, with the pointer for the Node going to the nothing Map of Nodes
+   */
 	Node A('A', nothing);
 	Node B('B', nothing);
 	Node C('C', nothing);
@@ -62,30 +62,30 @@ int main() {
 	Node J('J', nothing);
 
   /*
-  * Initializes mapNode as a map using nodes A through J
-  */
+   * Initializes mapNode as a map using nodes A through J
+   */
   mapNode = mapDefine(mapNode, A, B, C, D, E, F, G, H, I, J);
 
   /*
-  * Connects Edges and Vertexes to Different Nodes inside of mapNode
-  */
+   * Connects Edges and Vertexes to Different Nodes inside of mapNode
+   */
   addEdges(mapNode);
 
   /*
-  * Sets srand time value
-  */
+   * Sets srand time value
+   */
 	srand(time(NULL));
 	
   /*
-  * Prints Start of Fixed Network Simulation
-  */
+   * Prints Start of Fixed Network Simulation
+   */
 	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
 	std::cout << "Network Fixed Simulation:" << std::endl;
 	std::cout << std::endl << "Route Discovery from node A to node J" << std::endl;
 
   /*
-  * Calls SendRREQ with the map of mapNodes, starting with A, going to J, with a random request ID, using Network of chars
-  */
+   * Calls SendRREQ with the map of mapNodes, starting with A, going to J, with a random request ID, using Network of chars
+   */
 	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
 
