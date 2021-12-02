@@ -45,7 +45,8 @@ std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, N
  */
 
 int main() {
-  std::cout << "CPE 400 Project" << std::endl;
+  std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+  std::cout << "\n" << "CPE 400 Final Project" << std::endl;
 
   /*
    * Initializes network of chars for node names
@@ -90,7 +91,7 @@ int main() {
   /*
    * Prints Start of Fixed Network Simulation
    */
-	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl << std::endl;
 	std::cout << "Network Fixed Simulation:" << std::endl;
 	std::cout << std::endl << "Route Discovery from node A to node J" << std::endl;
 
@@ -102,15 +103,16 @@ int main() {
   /*
    * Print for Highly volatile simulation
    */
-	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
-	std::cout << "Volatile Network Simulation:" << std::endl;
+	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl << std::endl;
+	std::cout << "Volatile Network Simulation:" << std::endl << std::endl;
 	
 
   /*
    * 5x loop to test deleted and restored connections
    */
 	for(int i=0; i<5; i++) {
-		std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+    // begin test
+		std::cout << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
 		std::cout << std::endl << "Test: " << i+1 << std::endl;
 
 	  /*
@@ -128,13 +130,13 @@ int main() {
      * Calls threadLinks to simulate loss of connections and creating new connections
      */
 		threadLinks(mapNode, network);
-		std::cout << "\n" <<std::endl;
+		std::cout << std::endl;
 	}
 	
   /*
    * Print for final test 
    */
-	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+	std::cout << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl << std::endl;
 	std::cout << "New Path from Node A to Node J:" << std::endl << std::endl;
 	
   /*
