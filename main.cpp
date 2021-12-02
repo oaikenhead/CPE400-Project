@@ -1,9 +1,22 @@
+/*
+* INCLUDES
+*/
+
 #include "Node.h"
+
+/*
+* STRUCT: NodeChoice
+* Holds 2 chars, nodeA and nodeB
+*/
 
 struct NodeChoice {
   char nodeA;
   char nodeB;
 };
+
+/*
+* FUNCTION DECLARATIONS
+*/
 
 Node* ptrForNode(char node, std::map<char, Node*> mapNode);
 void addEdge(char first, char second, std::map<char, Node*> mapNode);
@@ -15,13 +28,28 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
 void addEdges(std::map<char, Node*> mapNode);
 std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J);
 
+
+/*
+* MAIN, GETS CALLED ON ./run
+*/
+
 int main() {
   std::cout << "CPE 400 Project" << std::endl;
+
+  /*
+  * Initializes network of chars for node names
+  */
   char network[NODE_NUM] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
-	// Instantiate nodes A - J
+  /*
+  * Creates Two maps of characters and Nodes, nothing and mapNode
+  */
 	std::map<char, Node*>	nothing;
 	std::map<char, Node*>	mapNode;
+
+  /*
+  * Constructs Nodes A through J, with the pointer for the Node going to the nothing Map of Nodes
+  */
 	Node A('A', nothing);
 	Node B('B', nothing);
 	Node C('C', nothing);
@@ -33,83 +61,99 @@ int main() {
 	Node I('I', nothing);
 	Node J('J', nothing);
 
-  
-	//define map
+  /*
+  * Initializes mapNode as a map using nodes A through J
+  */
   mapNode = mapDefine(mapNode, A, B, C, D, E, F, G, H, I, J);
-  /*
-	mapNode.insert(std::pair<char, Node*>('A', A.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('B', B.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('C', C.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('D', D.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('E', E.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('F', F.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('G', G.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('H', H.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('I', I.memLocation()));
-	mapNode.insert(std::pair<char, Node*>('J', J.memLocation()));
-  */
 
-	//create the edges of the map
+  /*
+  * Connects Edges and Vertexes to Different Nodes inside of mapNode
+  */
   addEdges(mapNode);
-  /*
-	addEdge('A', 'B', mapNode);
-	addEdge('B', 'C', mapNode);
-	addEdge('C', 'D', mapNode);
-	addEdge('D', 'E', mapNode);
-	addEdge('D', 'F', mapNode);
-	addEdge('E', 'F', mapNode);
-	addEdge('E', 'H', mapNode);
-	addEdge('F', 'G', mapNode);
-	addEdge('G', 'H', mapNode);
-  addEdge('G', 'I', mapNode);
-	addEdge('H', 'I', mapNode);
-	addEdge('H', 'J', mapNode);
-  */
 
-	// run the simulation
+  /*
+  * Sets srand time value
+  */
 	srand(time(NULL));
 	
-	//fixed test number
-	std::cout << std::endl << "**************************************" << std::endl;
-	std::cout << "Fixed network simulation:" << std::endl;
-	std::cout << std::endl << "Route Discovery from A to J" << std::endl;
-	
+  /*
+  * Prints Start of Fixed Network Simulation
+  */
+	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+	std::cout << "Network Fixed Simulation:" << std::endl;
+	std::cout << std::endl << "Route Discovery from node A to node J" << std::endl;
+
+  /*
+  * Calls SendRREQ with the map of mapNodes, starting with A, going to J, with a random request ID, using Network of chars
+  */
 	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
+
+/*
+
+FOR OLLIVER 
+
+edge never gets destroyed or simulated??
+call destroy edge then run? or add destroy edge then fix?
+
+
+
+*/
+
 	std::cout << std::endl << "-->Destroyed edge between B and C." << std::endl; 
 
 	
 	std::cout << std::endl << "-->Restore edge between B and C, to get get original network back." << std::endl; 
 	addEdge('B', 'C', mapNode);
 	
-	//highly volatile example
-	std::cout << std::endl << "**************************************" << std::endl;
-	std::cout << "Highly volatile network simulation test :" << std::endl;
+
+//end of potentially pointless code
+
+
+
+
+  /*
+  * Print for Highly volatile simulation
+  */
+	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+	std::cout << "Volatile Network Simulation:" << std::endl;
 	
+
+  /*
+  * 5x loop to test deleted and restored connections
+  */
 	for(int i=0; i<5; i++)
 	{
-		std::cout << std::endl << "--------------------------------" << std::endl;
-		std::cout << std::endl << "TEST #" << i+1 << std::endl;
+		std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+		std::cout << std::endl << "Test: " << i+1 << std::endl;
 
-	// Randomly pick a connection between 2 nodes
+	 /*
+    * Creates randomly generated nodes, and prints them
+   */
 		NodeChoice generated_nodes = randSelectNode(network);
-		std::cout << "\nConnection between nodes " << generated_nodes.nodeA << " and " << generated_nodes.nodeB << ".\n" << std::endl;
-		
+		std::cout << "\nNode -> " << generated_nodes.nodeA << " and -> " << generated_nodes.nodeB << " are connected.\n" << std::endl;
+	 /*
+    * Calls sendRREQ with the randomly generated nodes
+   */
 		sendRREQ(mapNode, generated_nodes.nodeA, rand(), generated_nodes.nodeB, network);
-		
-	// Call the simulated connection
+
+	 /*
+    * Calls threadLinks to simulate loss of connections and creating new connections
+   */
 		threadLinks(mapNode, network);
 		
-		std::cout << std::endl;
+		std::cout << "\n\n" <<std::endl;
 	}
 	
-	//redo fixed network, to see if path between A and J changed
-	std::cout << std::endl << "**************************************" << std::endl;
-	std::cout << "Lastly, lets see if path between A to J changed after all of those edges being destroyed/created:" << std::endl;
-	std::cout << std::endl << "Route Discovery: A to J" << std::endl;
-	std::cout<< std::endl <<"*Note: Every test run will have different outcomes*"<<std::endl<<std::endl;
+  /*
+  * Print for final test 
+  */
+	std::cout << std::endl << "-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-" << std::endl;
+	std::cout << "New Path from Node A to Node J:" << std::endl<< std::endl<< std::endl;
 	
-
+  /*
+  * Final SendRREQ to show new path from A to J
+  */
 	sendRREQ(mapNode, 'A', rand(), 'J', network);
 	
   return 0;
