@@ -149,7 +149,7 @@ int main() {
 
 /*
  * FUNCTION:ptrForNode 
- *     grabs pointer char and the node from mapNode and gets a pointer to the next iteration
+ *    grabs pointer char and the node from mapNode and gets a pointer to the next iteration
  * RETURNS: Node Pointer
  */
 Node* ptrForNode(char node, std::map<char, Node*> mapNode) {
@@ -159,7 +159,7 @@ Node* ptrForNode(char node, std::map<char, Node*> mapNode) {
 
 /*
  * FUNCTION: addEdge 
- *     adds edge between chosen nodes by char, then connects the pointers to the nodes
+ *    adds edge between chosen nodes by char, then connects the pointers to the nodes
  * RETURNS: void
  */
 void addEdge(char first, char second, std::map<char, Node*> mapNode) {
@@ -172,7 +172,7 @@ void addEdge(char first, char second, std::map<char, Node*> mapNode) {
 
 /*
  * FUNCTION: destroyEdge 
- *     destroys edge by removing connection
+ *    destroys edge by removing connection
  * RETURNS: void
  */
 void destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
@@ -182,7 +182,7 @@ void destroyEdge(char first, char second, std::map<char, Node*> mapNode) {
 
 /*
  * FUNCTION: checkConnected
- *     Checks if two nodes are connected with edges using the char values
+ *    Checks if two nodes are connected with edges using the char values
  * RETURNS: bool
  */
 bool checkConnected(char first, char second, std::map<char, Node*> mapNode) {
@@ -191,7 +191,7 @@ bool checkConnected(char first, char second, std::map<char, Node*> mapNode) {
 
 /*
  * FUNCTION: randSelectNode
- *     Randomly selects two nodes and returns the two selected nodes
+ *    Randomly selects two nodes and returns the two selected nodes
  * RETURNS: NodeChoice
  */
 NodeChoice randSelectNode(char network[]) {
@@ -209,7 +209,7 @@ NodeChoice randSelectNode(char network[]) {
 
 /*
  * FUNCTION: threadLinks
- *     Generates a random number of nodes to choose from, then randomly destroys edges between seperate nodes. Then randomly creates edges. 
+ *    Generates a random number of nodes to choose from, then randomly destroys edges between seperate nodes. Then randomly creates edges. 
  * RETURNS: void
  */
 void threadLinks(std::map<char, Node*> mapNode, char network[]) {
@@ -231,7 +231,7 @@ void threadLinks(std::map<char, Node*> mapNode, char network[]) {
 
 /*
  * FUNCTION: sendRREQ
- *     simulates successful and unsuccessful network by taking in a source and destination node.  
+ *    simulates successful and unsuccessful network by taking in a source and destination node.  
  * RETURNS: void
  */
 void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char destination, char network[]) {
@@ -314,7 +314,7 @@ void sendRREQ(std::map<char, Node*> mapNode, char src, int request_ID, char dest
 
 /*
  * FUNCTION: mapDefine
- *     Inserts nodes into map  
+ *    Inserts nodes into map  
  * RETURNS: map of Nodes
  */
 std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, Node C, Node D, Node E, Node F, Node G, Node H, Node I, Node J) {
@@ -334,7 +334,7 @@ std::map<char, Node*> mapDefine(std::map<char, Node*> mapNode, Node A, Node B, N
 
 /*
  * FUNCTION: addEdges
- *     starts complete network with default edges  
+ *    starts complete network with default edges  
  * RETURNS: void
  */
 void addEdges(std::map<char, Node*> mapNode) {

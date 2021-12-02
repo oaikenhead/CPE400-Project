@@ -47,7 +47,7 @@ class Node {
 
 /*
  * FUNCTION: Parameterized Ctor
- * sets a parameterized instance of the Node object
+ *    sets a parameterized instance of the Node object
  * RETURNS: The current class instance
  */
 Node::Node(char nodeLetter, std::map<char, Node*> connects) {
@@ -64,7 +64,7 @@ Node::Node(char nodeLetter, std::map<char, Node*> connects) {
 
 /*
  * FUNCTION: Assignment Operator
- * assigns lhs to rhs then returns
+ *    assigns lhs to rhs then returns
  * RETURNS: The value of the operator specified by left operand
  */
 Node& Node::operator=(const Node& rhs) {
@@ -76,7 +76,7 @@ Node& Node::operator=(const Node& rhs) {
 
 /*
  * FUNCTION: memLocation
- * sends the memory location of the Node
+ *    sends the memory location of the Node
  * RETURNS: Node pointer to memory location
  */
 Node* Node::memLocation() {
@@ -85,7 +85,7 @@ Node* Node::memLocation() {
 
 /*
  * FUNCTION: connectAssign
- * connects map of nodes to nodes being passed in
+ *    connects map of nodes to nodes being passed in
  * RETURNS: nothing (void)
  */
 void Node::connectAssign(std::map<char, Node*> connects) {
@@ -94,7 +94,7 @@ void Node::connectAssign(std::map<char, Node*> connects) {
 
 /*
  * FUNCTION: insConnect
- * inserting newly creat3ed node connections into the Node map
+ *    inserting newly creat3ed node connections into the Node map
  * RETURNS: nothing (void)
  */
 void Node::insConnect(char nodeDes, Node* loc) {
@@ -103,7 +103,7 @@ void Node::insConnect(char nodeDes, Node* loc) {
 
 /*
  * FUNCTION: removeConnect
- * removing node connections
+ *    removing node connections
  * RETURNS: nothing (void)
  */
 void Node::removeConnect(char nodeDes) {
@@ -112,7 +112,7 @@ void Node::removeConnect(char nodeDes) {
 
 /*
  * FUNCTION: sendRREP
- * simulates sending an RREQ message
+ *    simulates sending an RREQ message
  * RETURNS: nothing (void)
  */
 void Node::sendRREP(char src, char dest, int size, std::string RREQ_reply, char RREP_SRC) {
@@ -153,7 +153,7 @@ void Node::sendRREP(char src, char dest, int size, std::string RREQ_reply, char 
 
 /*
  * FUNCTION: connected
- * checks if a node is connected
+ *    checks if a node is connected
  * RETURNS: true/false (bool)
  */
 bool Node::connected(char nodeName) {
